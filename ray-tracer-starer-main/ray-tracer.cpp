@@ -7,7 +7,7 @@
 #include <vector>
 #include "Vector3.hpp"
 #include "Triangle.hpp"
-//#include "file_util.h"
+#include "file_util.h"
 
 using namespace std;
 
@@ -173,6 +173,19 @@ Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 2000){
 
 int main()
 {
+
+  string vertices;
+  string faces;
+
+  ///Parsing obj 
+  vector<string> lines = readLines("test.obj");
+  for(const string& line: lines){
+    //cout << line << endl;
+    vector<string> parts = split(line, ' ');
+
+    //cout << parts[0] << endl;
+  }
+
 
   Vector3 camera_origin = Vector3{0, 0, 1};
   Vector3 camera_look_at = Vector3{0, 0, 0};
