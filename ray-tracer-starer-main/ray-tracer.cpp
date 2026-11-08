@@ -7,7 +7,7 @@
 #include <vector>
 #include "Vector3.hpp"
 #include "Triangle.hpp"
-#include "file_util.h"
+//#include "file_util.h"
 
 using namespace std;
 
@@ -59,6 +59,10 @@ float trace_ray_distance(Vector3 origin, Vector3 direction){
 
       float t = -(abc.dot(origin) + d)/abc.dot(direction);
 
+      if(t > closest_t || t <= 0){
+        continue;
+      }
+
       Vector3 collision_point = direction * t + origin;
 
       Vector3 minus_one = collision_point - triangle.one;
@@ -77,8 +81,8 @@ float trace_ray_distance(Vector3 origin, Vector3 direction){
 
       float sum = u + v + a;
 
-      float diff = abs(sum - 1.0f);
-      if(diff > .00001f){
+      float diff = abs(1 - sum);
+      if(diff > .00001f || isnan(sum)){
         //i'm not in the triangle
       }
       else{
@@ -110,6 +114,10 @@ Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 2000){
 
       Vector3 collision_point = direction * t + origin;
 
+      if(t > closest_t || t <= 0){
+        continue;
+      }
+
       Vector3 minus_one = collision_point - triangle.one;
       Vector3 minus_two = collision_point - triangle.two;
       Vector3 minus_three = collision_point - triangle.three;
@@ -126,8 +134,8 @@ Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 2000){
 
       float sum = u + v + a;
 
-      float diff = abs(sum - 1.0f);
-      if(diff > .00001f){
+      float diff = abs(1 - sum);
+      if(diff > .00001f || isnan(sum)){
         //i'm not in the triangle
       }
       else{
