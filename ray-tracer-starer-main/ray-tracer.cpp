@@ -17,31 +17,33 @@ const int h = 640;
 unsigned char pixels[w * h * 3];
 
 // Left Wall
-Triangle triangle01 = Triangle{Vector3{-1, 1, -2}, Vector3{-1, 1, -1}, Vector3{-1, -1, -2}};
-Triangle triangle02 = Triangle{Vector3{-1, 1, -1}, Vector3{-1, -1, -1}, Vector3{-1, -1, -2}};
+// Triangle triangle01 = Triangle{Vector3{-1, 1, -2}, Vector3{-1, 1, -1}, Vector3{-1, -1, -2}};
+// Triangle triangle02 = Triangle{Vector3{-1, 1, -1}, Vector3{-1, -1, -1}, Vector3{-1, -1, -2}};
 
-// Right Wall
-Triangle triangle03 = Triangle{Vector3{1, 1, -1}, Vector3{1, 1, -2}, Vector3{1, -1, -2}};
-Triangle triangle04 = Triangle{Vector3{1, -1, -1}, Vector3{1, 1, -1}, Vector3{1, -1, -2}};
+// // Right Wall
+// Triangle triangle03 = Triangle{Vector3{1, 1, -1}, Vector3{1, 1, -2}, Vector3{1, -1, -2}};
+// Triangle triangle04 = Triangle{Vector3{1, -1, -1}, Vector3{1, 1, -1}, Vector3{1, -1, -2}};
 
-// Top Wall
-Triangle triangle05 = Triangle{Vector3{-1, 1, -1}, Vector3{-1, 1, -2}, Vector3{1, 1, -2}};
-Triangle triangle06 = Triangle{Vector3{1, 1, -1}, Vector3{-1, 1, -1}, Vector3{1, 1, -2}};
+// // Top Wall
+// Triangle triangle05 = Triangle{Vector3{-1, 1, -1}, Vector3{-1, 1, -2}, Vector3{1, 1, -2}};
+// Triangle triangle06 = Triangle{Vector3{1, 1, -1}, Vector3{-1, 1, -1}, Vector3{1, 1, -2}};
 
-// Bottom Wall
-Triangle triangle07 = Triangle{Vector3{-1, -1, -2}, Vector3{-1, -1, -1}, Vector3{1, -1, -2}};
-Triangle triangle08 = Triangle{Vector3{-1, -1, -1}, Vector3{1, -1, -1}, Vector3{1, -1, -2}};
+// // Bottom Wall
+// Triangle triangle07 = Triangle{Vector3{-1, -1, -2}, Vector3{-1, -1, -1}, Vector3{1, -1, -2}};
+// Triangle triangle08 = Triangle{Vector3{-1, -1, -1}, Vector3{1, -1, -1}, Vector3{1, -1, -2}};
 
-// Back Wall
-Triangle triangle09 = Triangle{Vector3{-1, 1, -2}, Vector3{-1, -1, -2}, Vector3{1, -1, -2}};
-Triangle triangle10 = Triangle{Vector3{1, 1, -2}, Vector3{-1, 1, -2}, Vector3{1, -1, -2}};
+// // Back Wall
+// Triangle triangle09 = Triangle{Vector3{-1, 1, -2}, Vector3{-1, -1, -2}, Vector3{1, -1, -2}};
+// Triangle triangle10 = Triangle{Vector3{1, 1, -2}, Vector3{-1, 1, -2}, Vector3{1, -1, -2}};
 
-vector<Triangle> triangles = {
-    triangle01, triangle02,
-    triangle03, triangle04,
-    triangle05, triangle06,
-    triangle07, triangle08,
-    triangle09, triangle10};
+// vector<Triangle> triangles = {
+//     triangle01, triangle02,
+//     triangle03, triangle04,
+//     triangle05, triangle06,
+//     triangle07, triangle08,
+//     triangle09, triangle10};
+
+vector<Triangle> triangles;
 
 Vector3 background_color = Vector3{0, 128, 0};
 
@@ -174,16 +176,36 @@ Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 2000){
 int main()
 {
 
-  string vertices;
-  string faces;
-
   ///Parsing obj 
   vector<string> lines = readLines("test.obj");
   for(const string& line: lines){
     //cout << line << endl;
     vector<string> parts = split(line, ' ');
-
     //cout << parts[0] << endl;
+
+    if(parts[0] == "v"){
+      Vector3 vertex = Vector3{stof(parts[1]), stof(parts[2]), stof(parts[3])};
+      //cout << "Vertices: " << vertex.x << ", " << vertex.y << ", " << vertex.z << endl;
+    }
+    else if(parts[0] == "f"){
+      // cout << parts[1] << endl;
+      // cout << parts[2] << endl;
+      // cout << parts[3] << endl;
+
+      ///To do: split parts of face beyond parts[0], then figure out where to do from there cause right now
+      ///they get split only on " " and print out as 4/5/6 which gets turned into just 4 with stof()
+      ///split and then turn into floats so these can all work and be turned into triangles potentially
+
+      // Vector3 face_one = Vector3{stof(parts[1]), stof(parts[2]), stof(parts[3])};
+      // cout << "Face1: " << face_one.x << ", " << face_one.y << ", " << face_one.z << endl;
+      // Vector3 face_two = Vector3{stof(parts[4]), stof(parts[5]), stof(parts[6])};
+      // cout << "Face2: " << face_two.x << ", " << face_two.y << ", " << face_two.z << endl;
+      // Vector3 face_three = Vector3{stof(parts[7]), stof(parts[8]), stof(parts[9])};
+      // cout << "Face3: " << face_three.x << ", " << face_three.y << ", " << face_three.z << endl;
+
+      //Triangle triangle = Triangle{face_one, face_two, face_three};
+      //triangles.push_back(triangle);
+    }
   }
 
 
