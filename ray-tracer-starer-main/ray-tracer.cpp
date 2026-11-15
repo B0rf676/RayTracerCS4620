@@ -11,37 +11,10 @@
 
 using namespace std;
 
-const int w = 640;
-const int h = 640;
+const int w = 680;
+const int h = 680;
 
 unsigned char pixels[w * h * 3];
-
-// Left Wall
-// Triangle triangle01 = Triangle{Vector3{-1, 1, -2}, Vector3{-1, 1, -1}, Vector3{-1, -1, -2}};
-// Triangle triangle02 = Triangle{Vector3{-1, 1, -1}, Vector3{-1, -1, -1}, Vector3{-1, -1, -2}};
-
-// // Right Wall
-// Triangle triangle03 = Triangle{Vector3{1, 1, -1}, Vector3{1, 1, -2}, Vector3{1, -1, -2}};
-// Triangle triangle04 = Triangle{Vector3{1, -1, -1}, Vector3{1, 1, -1}, Vector3{1, -1, -2}};
-
-// // Top Wall
-// Triangle triangle05 = Triangle{Vector3{-1, 1, -1}, Vector3{-1, 1, -2}, Vector3{1, 1, -2}};
-// Triangle triangle06 = Triangle{Vector3{1, 1, -1}, Vector3{-1, 1, -1}, Vector3{1, 1, -2}};
-
-// // Bottom Wall
-// Triangle triangle07 = Triangle{Vector3{-1, -1, -2}, Vector3{-1, -1, -1}, Vector3{1, -1, -2}};
-// Triangle triangle08 = Triangle{Vector3{-1, -1, -1}, Vector3{1, -1, -1}, Vector3{1, -1, -2}};
-
-// // Back Wall
-// Triangle triangle09 = Triangle{Vector3{-1, 1, -2}, Vector3{-1, -1, -2}, Vector3{1, -1, -2}};
-// Triangle triangle10 = Triangle{Vector3{1, 1, -2}, Vector3{-1, 1, -2}, Vector3{1, -1, -2}};
-
-// vector<Triangle> triangles = {
-//     triangle01, triangle02,
-//     triangle03, triangle04,
-//     triangle05, triangle06,
-//     triangle07, triangle08,
-//     triangle09, triangle10};
 
 vector<Triangle> triangles;
 
@@ -95,14 +68,14 @@ float trace_ray_distance(Vector3 origin, Vector3 direction){
   return closest_t;
 }
 
-Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 2000){
+Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 5){
 
   Vector3 color = Vector3{background_color.x, background_color.y, background_color.z};
   if(bounces <= 0){
     return background_color;
   }
 
-  float closest_t = 1000000;
+  float closest_t = INFINITY;
 
   for(const Triangle &triangle : triangles){
     //Find where we hit the plane
@@ -178,6 +151,9 @@ int main()
 
   ///Parsing obj 
   vector<string> lines = readLines("test.obj");
+
+  vector<Vector3> vertices;
+
   for(const string& line: lines){
     //cout << line << endl;
     vector<string> parts = split(line, ' ');
@@ -186,27 +162,36 @@ int main()
     if(parts[0] == "v"){
       Vector3 vertex = Vector3{stof(parts[1]), stof(parts[2]), stof(parts[3])};
       //cout << "Vertices: " << vertex.x << ", " << vertex.y << ", " << vertex.z << endl;
+      vertices.push_back(vertex);
     }
     else if(parts[0] == "f"){
-      // cout << parts[1] << endl;
-      // cout << parts[2] << endl;
-      // cout << parts[3] << endl;
 
-      ///To do: split parts of face beyond parts[0], then figure out where to do from there cause right now
-      ///they get split only on " " and print out as 4/5/6 which gets turned into just 4 with stof()
-      ///split and then turn into floats so these can all work and be turned into triangles potentially
+      vector<float> faceIndex;
 
-      // Vector3 face_one = Vector3{stof(parts[1]), stof(parts[2]), stof(parts[3])};
-      // cout << "Face1: " << face_one.x << ", " << face_one.y << ", " << face_one.z << endl;
-      // Vector3 face_two = Vector3{stof(parts[4]), stof(parts[5]), stof(parts[6])};
-      // cout << "Face2: " << face_two.x << ", " << face_two.y << ", " << face_two.z << endl;
-      // Vector3 face_three = Vector3{stof(parts[7]), stof(parts[8]), stof(parts[9])};
-      // cout << "Face3: " << face_three.x << ", " << face_three.y << ", " << face_three.z << endl;
+      for(size_t i = 1; i < parts.size(); i++){
+        if(parts[i].empty()){
+          continue;
+        }
 
-      //Triangle triangle = Triangle{face_one, face_two, face_three};
-      //triangles.push_back(triangle);
+        vector<string> splitParts = split(parts[i], '/');
+        float vertexIndex = stof(splitParts[0]) - 1;
+        faceIndex.push_back(vertexIndex);
+      }
+
+      for(size_t i = 1; i + 1 < faceIndex.size(); i++){
+
+      Vector3 vertex1 = vertices[faceIndex[0]];
+      Vector3 vertex2 = vertices[faceIndex[i]];
+      Vector3 vertex3 = vertices[faceIndex[i + 1]];
+
+      Triangle triangle = Triangle{vertex1, vertex2, vertex3};
+      triangles.push_back(triangle);
+
+      }
     }
-  }
+  }  
+
+  cout << "Triangles loaded: " << triangles.size() << endl;
 
 
   Vector3 camera_origin = Vector3{0, 0, 1};
@@ -216,6 +201,11 @@ int main()
   /// Loop over each line doing down
   for (int y = 0; y < h; y++)
   {
+    //Progress bar cause this could take a while
+    if (y % 10 == 0) {
+      cout << "Progress: " << (y * 100 / h) << "% (Row " << y << "/" << h << ")" << endl;
+    }
+
     /// While going down, loop over every pixel going right
     for (int x = 0; x < w; x++)
     {
