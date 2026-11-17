@@ -68,7 +68,7 @@ float trace_ray_distance(Vector3 origin, Vector3 direction){
   return closest_t;
 }
 
-Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 5){
+Vector3 trace_ray(Vector3 origin, Vector3 direction, float red, float green, float blue, int bounces = 5){
 
   Vector3 color = Vector3{background_color.x, background_color.y, background_color.z};
   if(bounces <= 0){
@@ -117,7 +117,7 @@ Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 5){
         //i'm in the triangle
         closest_t = t;
 
-        Vector3 base_color = Vector3{255,255,255};
+        Vector3 base_color = Vector3{red, green, blue};
         Vector3 light_direction = Vector3{.5, 1, .5}.Normalize();
         
         Vector3 ambient = base_color * .1;
@@ -133,7 +133,7 @@ Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 5){
         Vector3 reflective = Vector3{0, 0, 0};
         if(true){
           Vector3 reflection_direction = direction - normal * 2 * normal.dot(direction);
-          reflective = trace_ray(collision_point, reflection_direction, bounces - 1) * 0.5;
+          reflective = trace_ray(collision_point, reflection_direction, red, green, blue, bounces - 1) * 0.5;
           diffuse *= 0.5;
           ambient *= 0.5;
         }
@@ -149,8 +149,12 @@ Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 5){
 int main()
 {
 
+  float red;
+  float green;
+  float blue;
+
   ///Parsing obj 
-  vector<string> lines = readLines("test.obj");
+  vector<string> lines = readLines("test2.obj");
 
   vector<Vector3> vertices;
 
@@ -193,6 +197,24 @@ int main()
 
   cout << "Triangles loaded: " << triangles.size() << endl;
 
+  vector<string> realColor = readLines("test2.mtl");
+
+  cout << "Material file read" << endl;
+
+  for(const string& line: realColor){
+    vector<string> colorLines = split(line, ' ');
+    if(colorLines[0].empty()){
+      continue;
+    }
+    else if(colorLines[0] == "Kd"){
+      red = stof(colorLines[1]) * 255;
+      blue = stof(colorLines[2]) * 255;
+      green = stof(colorLines[3]) * 255;
+    }
+  }
+
+  cout << "Colors loaded" << endl;
+
 
   Vector3 camera_origin = Vector3{0, 0, 1};
   Vector3 camera_look_at = Vector3{0, 0, 0};
@@ -230,7 +252,7 @@ int main()
       Vector3 temp = (target - camera_origin);
       Vector3 ray = temp.Normalize();
 
-      Vector3 color = trace_ray(camera_origin, ray);
+      Vector3 color = trace_ray(camera_origin, ray, red, green, blue);
 
       r = color.x;
       g = color.y;
