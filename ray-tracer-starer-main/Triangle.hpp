@@ -6,7 +6,7 @@
 class Triangle
 {
   public:
-  Vector3 one, two, three;
+  Vector3 one, two, three, color;
 };
 
 #endif
