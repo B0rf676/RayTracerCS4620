@@ -238,7 +238,6 @@ int main()
 
   cout << "Triangles loaded: " << triangles.size() << endl;
 
-
   Vector3 camera_origin = Vector3{0, 0, 1};
   Vector3 camera_look_at = Vector3{0, 0, 0};
   Vector3 camera_up = Vector3{0, 1, 0};
